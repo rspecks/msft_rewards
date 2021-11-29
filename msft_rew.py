@@ -1,12 +1,11 @@
 # Main TODOs
-# - Set up logging 
 # - Add different checks to ensure on right page
 # - Organize files with OOP structure 
 # - Add documentation (why so late? idk cuz fk documentation)
 # - Move to laptop (or any available compatible device)
 # -- Setup web server (or API?? Would be a first for me) on laptop
 # -- Allow for remote points making \(￣︶￣*\))
-# - Attempt luck at other ways to make points
+# - Attempt look at other ways to make points
 
 import random
 import pyautogui
@@ -26,27 +25,29 @@ ANDR_STUD = 2
 FILE_LOC = 0
 NEED_HELP = 1
 
-
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 1
 pyautogui.FAILSAFE = True
 
+log_file = "biglog.log"
+if not os.path.isfile(log_file):
+    #Create and configure logger
+    logging.basicConfig(filename=log_file,
+                        format='%(asctime)s %(message)s',
+                        filemode='a')
+
+#Creating an object
+logger=logging.getLogger()
+
+#Setting the threshold of logger to ERROR
+logger.setLevel(logging.DEBUG)
+
+# my main man
 def main():
 
     # JSOOOOOOOOOOOOOOOOOOOOON
     with open("files/pic_data.json") as file:
         pic_data = json.load(file)
-    
-    #Create and configure logger
-    logging.basicConfig(filename="newfile.log",
-                        format='%(asctime)s %(message)s',
-                        filemode='w')
-    
-    #Creating an object
-    logger=logging.getLogger()
-    
-    #Setting the threshold of logger to ERROR
-    logger.setLevel(logging.FATAL)
 
     # get a bunch of words
     word_dir = "files/word_list.txt"
@@ -96,7 +97,7 @@ def main():
 
         pc_count+=1
 
-        if pc_count >= 15:
+        if pc_count >= 1:
             
             desired_data = "msft_rewards"
             list_of_data = JsonReader(desired_data, pic_data)
@@ -125,7 +126,7 @@ def main():
     # clicking avd manager
     desired_data = "avd_mgr"
     list_of_data = JsonReader(desired_data, pic_data)
-    avd_mgr_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+    avd_mgr_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -4)
     pyautogui.click(avd_mgr_location)
     
     # clicking play on vm
@@ -159,7 +160,7 @@ def main():
     # clicking mobile search link
     desired_data = "vm_mobile_search_link"
     list_of_data = JsonReader(desired_data, pic_data)
-    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -4)
     pyautogui.click(vm_mobile_search_link_location)
 
     mobile_keep_going = True
@@ -167,15 +168,17 @@ def main():
     while mobile_keep_going:
 
         # clicking search
+        pyautogui.moveTo(100,100)
         desired_data = "vm_rewards_search"
         list_of_data = JsonReader(desired_data, pic_data)
-        vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+        vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -3)
         pyautogui.click(vm_rewards_search_location)
+        pyautogui.moveTo(100,100)
         
         # click the x button that appears when you click on search; clears search
         desired_data = "vm_search_x_bttn"
         list_of_data = JsonReader(desired_data, pic_data)
-        vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+        vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -3)
         pyautogui.click(vm_search_x_bttn_location)
 
         LetsGetRandom(word_list)
@@ -220,20 +223,19 @@ def AppLauncher(app):
     elif app == ANDR_STUD:
         os.startfile('"C:/Program Files/Android/Android Studio/bin/studio64.exe"')
 
-def ExceptionHandler(obj, need_help, excption=0):
+def ExceptionHandler(obj, need_help, excption):
 
     flag = False
     try:
         obj_location = pyautogui.center(obj)
         flag = True
     except Exception:
-        #TODO figure out logging lol 
-        print()
+        logger.error("Error finding " + need_help)
     if excption >= 1:
-        time.sleep(5)
+        time.sleep(2.5)
     if flag:
         return obj_location
-    elif excption >= 2 and not flag:
+    elif excption >= 2:
         pyautogui.alert(text= need_help, title='Looks like im lost, can you help me find.. ')
         return EMPTY
     else:
@@ -254,10 +256,9 @@ def LetsGetRandom(word_list):
     pyautogui.typewrite(str(word_list[random.randint(0,10000)]))
     pyautogui.typewrite(['enter'])
 
-def LookingForLocation(pic, need_help, special_flag=False):
-
+def LookingForLocation(pic, need_help, special_flag=False, excption = 0 ):
+    
     looking = True
-    excption = 0 
     while looking:
         obj = pyautogui.locateOnScreen(pic, confidence=0.8)
         obj_location = ExceptionHandler(obj, need_help, excption)
@@ -267,39 +268,7 @@ def LookingForLocation(pic, need_help, special_flag=False):
         elif special_flag:
             return EMPTY
 
-
-        
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# main bish
 main()
 
 
