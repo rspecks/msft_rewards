@@ -1,5 +1,4 @@
 # Main TODOs
-# - Create json file for pictures and descriptions 
 # - Set up logging 
 # - Add different checks to ensure on right page
 # - Organize files with OOP structure 
