@@ -16,10 +16,14 @@ import time
 import requests
 import pyperclip
 import logging
+import os
 
 EMPTY = ""
 PC_REWARD_CAP = "150"
 MOB_REWARD_CAP = "100"
+#TODO Enum probs
+EDGE = 1
+ANDR_STUD = 2 
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 1
@@ -39,16 +43,15 @@ def main():
     logger.setLevel(logging.FATAL)
 
     # get a bunch of words
-    # TODO download this site and read locally since itll be a lil quicker 
-    word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
-    response = requests.get(word_site)
-    word_list = response.content.splitlines()
+    word_dir = "files/word_list.txt"
+    with open(word_dir, 'r') as fh:
+        word_list = fh.readlines()
     this_word = ""
     word_count = 0
     for word in word_list:
         inner_count = 0 
         for letter in str(word):    
-            if letter != "\'" and inner_count != 0:
+            if letter != "\'" and letter != "\\" and (len(word)-1) != inner_count:
                 this_word = this_word + str(letter)
             inner_count+=1
         word_list[word_count] = this_word
@@ -59,7 +62,7 @@ def main():
     # Functionality for browser points starts here #
     ################################################
 
-    LaunchEdge()
+    AppLauncher(EDGE)
 
     # waiting on browser (can adjust)
     time.sleep(2)
@@ -112,9 +115,7 @@ def main():
     # Functionality for mobile points starts here #
     ###############################################
 
-    pyautogui.typewrite(['win'])
-    pyautogui.typewrite('C:\Program Files\Android\Android Studio\\bin\studio64.exe')
-    pyautogui.typewrite(['enter'])
+    AppLauncher(ANDR_STUD)
 
     # clicking avd manager
     pic_avd = "pics/as_avd_manager.png"
@@ -178,7 +179,7 @@ def main():
 
         if mobile_count >= 10:
             
-            LaunchEdge()
+            AppLauncher(EDGE)
             special_loop = True
             while special_loop:
                 pic_rewards = "pics/rewards_icon.png"
@@ -206,6 +207,12 @@ def main():
 #################
 #### Modules ####
 #################
+def AppLauncher(app):
+
+    if app == EDGE:
+        os.startfile('"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"')
+    elif app == ANDR_STUD:
+        os.startfile('"C:/Program Files/Android/Android Studio/bin/studio64.exe"')
 
 def ExceptionHandler(obj, need_help, excption=0):
 
@@ -225,11 +232,6 @@ def ExceptionHandler(obj, need_help, excption=0):
         return EMPTY
     else:
         return EMPTY
-
-def LaunchEdge():
-    pyautogui.typewrite(['win'])
-    pyautogui.typewrite('C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe')
-    pyautogui.typewrite(['enter'])
 
 def LetsGetRandom(word_list):
     """Probably going to be under a big ole Pyautogui class"""    
