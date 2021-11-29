@@ -1,6 +1,5 @@
 # Main TODOs
 # - Create json file for pictures and descriptions 
-# - Get words from local vs internet (would be faster/less expensive)
 # - Set up logging 
 # - Add different checks to ensure on right page
 # - Organize files with OOP structure 
@@ -13,7 +12,6 @@
 import random
 import pyautogui
 import time
-import requests
 import pyperclip
 import logging
 import os
@@ -64,8 +62,8 @@ def main():
 
     AppLauncher(EDGE)
 
-    # waiting on browser (can adjust)
-    time.sleep(2)
+    # # waiting on browser (can adjust)
+    # time.sleep(2)
 
     # going to bing.com
     pyautogui.hotkey('ctrl','t')
@@ -207,6 +205,7 @@ def main():
 #################
 #### Modules ####
 #################
+
 def AppLauncher(app):
 
     if app == EDGE:
