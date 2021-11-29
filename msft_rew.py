@@ -15,6 +15,7 @@ import time
 import pyperclip
 import logging
 import os
+import json
 
 EMPTY = ""
 PC_REWARD_CAP = "150"
@@ -22,6 +23,10 @@ MOB_REWARD_CAP = "100"
 #TODO Enum probs
 EDGE = 1
 ANDR_STUD = 2 
+# ya defo enums
+FILE_LOC = 0
+NEED_HELP = 1
+
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 1
@@ -29,6 +34,10 @@ pyautogui.FAILSAFE = True
 
 def main():
 
+    # JSOOOOOOOOOOOOOOOOOOOOON
+    with open("files/pic_data.json") as file:
+        pic_data = json.load(file)
+    
     #Create and configure logger
     logging.basicConfig(filename="newfile.log",
                         format='%(asctime)s %(message)s',
@@ -90,15 +99,14 @@ def main():
 
         if pc_count >= 15:
             
-            #TODO put all the pic info w description in json file
-            pic_rewards = "pics/rewards_icon.png"
-            need_help = "msft rewards button"
-            msft_rewards_location = LookingForLocation(pic_rewards, need_help)
+            desired_data = "msft_rewards"
+            list_of_data = JsonReader(desired_data, pic_data)
+            msft_rewards_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
             pyautogui.click(msft_rewards_location)
             
-            pic_earnings = "pics/pc_earnings_icon.png"
-            need_help = "the area in rewards extension"
-            earnings_location = LookingForLocation(pic_earnings, need_help)
+            desired_data = "pc_earnings"
+            list_of_data = JsonReader(desired_data, pic_data)
+            earnings_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
             pyautogui.doubleClick(earnings_location)
             pyautogui.hotkey('ctrl','c')
             
@@ -116,43 +124,43 @@ def main():
     AppLauncher(ANDR_STUD)
 
     # clicking avd manager
-    pic_avd = "pics/as_avd_manager.png"
-    need_help = "avd manager"
-    avd_mgr_location = LookingForLocation(pic_avd, need_help)
+    desired_data = "avd_mgr"
+    list_of_data = JsonReader(desired_data, pic_data)
+    avd_mgr_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(avd_mgr_location)
     
     # clicking play on vm
-    pic_as_vm_play = "pics/as_vm_play.png"
-    need_help = "the play button in avd manager"
-    as_vm_play_location = LookingForLocation(pic_as_vm_play, need_help)
+    desired_data = "vm_play"
+    list_of_data = JsonReader(desired_data, pic_data)
+    as_vm_play_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(as_vm_play_location)
 
     # clicking vm power button 
-    pic_as_vm_pwr_bttn = "pics/as_vm_pwr_bttn.png"
-    need_help = "power button on phone vm"
-    as_vm_pwr_bttn_location = LookingForLocation(pic_as_vm_pwr_bttn, need_help)
+    desired_data = "vm_pwr_bttn"
+    list_of_data = JsonReader(desired_data, pic_data)
+    as_vm_pwr_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(as_vm_pwr_bttn_location)
 
     # mama im coming hooOOOooomme (clicking home button on vm)
     special_loop = True
     while special_loop:
-        pic_as_vm_home_bttn = "pics/as_vm_home_bttn.png"
-        need_help = "home button a few buttons below power button"
-        as_vm_home_bttn_location = LookingForLocation(pic_as_vm_home_bttn, need_help)
+        desired_data = "vm_home_bttn"
+        list_of_data = JsonReader(desired_data, pic_data)
+        as_vm_home_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
         pyautogui.click(as_vm_home_bttn_location)
 
         # flagging the problem child, plays loop back
-        pic_vm_chrome_app = "pics/vm_chrome_app.png"
-        need_help = "the chrome app on vm"
-        vm_chrome_app_location = LookingForLocation(pic_vm_chrome_app, need_help, special_loop)
+        desired_data = "vm_chrome_app"
+        list_of_data = JsonReader(desired_data, pic_data)
+        vm_chrome_app_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], special_loop)
         if vm_chrome_app_location != EMPTY:
             pyautogui.click(vm_chrome_app_location)
             special_loop = False
 
     # clicking mobile search link
-    pic_vm_mobile_search_link = "pics/vm_mobile_search_link.png"
-    need_help = "the mobile rewards link on points breakdown"
-    vm_mobile_search_link_location = LookingForLocation(pic_vm_mobile_search_link, need_help)
+    desired_data = "vm_mobile_search_link"
+    list_of_data = JsonReader(desired_data, pic_data)
+    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(vm_mobile_search_link_location)
 
     mobile_keep_going = True
@@ -160,15 +168,15 @@ def main():
     while mobile_keep_going:
 
         # clicking search
-        pic_vm_rewards_search = "pics/vm_rewards_search.png"
-        need_help = "the search area after you click on rewards link"
-        vm_rewards_search_location = LookingForLocation(pic_vm_rewards_search, need_help)
+        desired_data = "vm_rewards_search"
+        list_of_data = JsonReader(desired_data, pic_data)
+        vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
         pyautogui.click(vm_rewards_search_location)
         
         # click the x button that appears when you click on search; clears search
-        pic_vm_search_x_bttn = "pics/vm_search_x_bttn.png"
-        need_help = "the 'x' that appears after clicking on search box"
-        vm_search_x_bttn_location = LookingForLocation(pic_vm_search_x_bttn, need_help)
+        desired_data = "vm_search_x_bttn"
+        list_of_data = JsonReader(desired_data, pic_data)
+        vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
         pyautogui.click(vm_search_x_bttn_location)
 
         LetsGetRandom(word_list)
@@ -180,15 +188,15 @@ def main():
             AppLauncher(EDGE)
             special_loop = True
             while special_loop:
-                pic_rewards = "pics/rewards_icon.png"
-                need_help = "msft rewards button"
-                msft_rewards_location = LookingForLocation(pic_rewards, need_help)
+                desired_data = "msft_rewards"
+                list_of_data = JsonReader(desired_data, pic_data)
+                msft_rewards_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
                 pyautogui.click(msft_rewards_location)
 
                 # potential problem child
-                pic_mobile_earnings = "pics/mobile_earnings_icon.png"
-                need_help = "the rewards ext area"
-                mobile_earnings_location = LookingForLocation(pic_mobile_earnings, need_help, special_loop)
+                desired_data = "mobile_earnings"
+                list_of_data = JsonReader(desired_data, pic_data)
+                mobile_earnings_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], special_loop)
                 if mobile_earnings_location != EMPTY:
                     pyautogui.doubleClick(mobile_earnings_location)
                     pyautogui.hotkey('ctrl','c')
@@ -231,6 +239,16 @@ def ExceptionHandler(obj, need_help, excption=0):
         return EMPTY
     else:
         return EMPTY
+
+def JsonReader(desired_data, pic_data):
+    list_of_data = []
+    for data in pic_data:
+        if data["Obj_Name"] == desired_data:
+            list_of_data.append(data["File_Loc"])
+            list_of_data.append(data["Description"])
+            return list_of_data
+
+
 
 def LetsGetRandom(word_list):
     """Probably going to be under a big ole Pyautogui class"""    
