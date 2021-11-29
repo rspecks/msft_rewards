@@ -26,7 +26,7 @@ FILE_LOC = 0
 NEED_HELP = 1
 
 # failsafes, drag mouse to top left corner of screen to quit app
-pyautogui.PAUSE = 1
+pyautogui.PAUSE = 0.75
 pyautogui.FAILSAFE = True
 
 log_file = "biglog.log"
@@ -97,7 +97,7 @@ def main():
 
         pc_count+=1
 
-        if pc_count >= 1:
+        if pc_count >= 15:
             
             desired_data = "msft_rewards"
             list_of_data = JsonReader(desired_data, pic_data)
@@ -113,7 +113,7 @@ def main():
             rewards_value = pyperclip.paste()
             if rewards_value == PC_REWARD_CAP:
                 pc_keep_going = False
-                pyautogui.alert(text='Got the loot, onto the next task', title='All Done!')
+               # pyautogui.alert(text='Got the loot, onto the next task', title='All Done!')
             else:
                 pc_count = 10
 
@@ -126,7 +126,7 @@ def main():
     # clicking avd manager
     desired_data = "avd_mgr"
     list_of_data = JsonReader(desired_data, pic_data)
-    avd_mgr_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -4)
+    avd_mgr_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(avd_mgr_location)
     
     # clicking play on vm
@@ -160,7 +160,7 @@ def main():
     # clicking mobile search link
     desired_data = "vm_mobile_search_link"
     list_of_data = JsonReader(desired_data, pic_data)
-    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -4)
+    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(vm_mobile_search_link_location)
 
     mobile_keep_going = True
@@ -171,14 +171,14 @@ def main():
         pyautogui.moveTo(100,100)
         desired_data = "vm_rewards_search"
         list_of_data = JsonReader(desired_data, pic_data)
-        vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -3)
+        vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
         pyautogui.click(vm_rewards_search_location)
         pyautogui.moveTo(100,100)
         
         # click the x button that appears when you click on search; clears search
         desired_data = "vm_search_x_bttn"
         list_of_data = JsonReader(desired_data, pic_data)
-        vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, -3)
+        vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
         pyautogui.click(vm_search_x_bttn_location)
 
         LetsGetRandom(word_list)
@@ -235,8 +235,8 @@ def ExceptionHandler(obj, need_help, excption):
         time.sleep(2.5)
     if flag:
         return obj_location
-    elif excption >= 2:
-        pyautogui.alert(text= need_help, title='Looks like im lost, can you help me find.. ')
+    elif excption == 4:
+        logger.debug(need_help + " taking too long")
         return EMPTY
     else:
         return EMPTY
@@ -249,15 +249,14 @@ def JsonReader(desired_data, pic_data):
             list_of_data.append(data["Description"])
             return list_of_data
 
-
-
 def LetsGetRandom(word_list):
     """Probably going to be under a big ole Pyautogui class"""    
     pyautogui.typewrite(str(word_list[random.randint(0,10000)]))
     pyautogui.typewrite(['enter'])
 
-def LookingForLocation(pic, need_help, special_flag=False, excption = 0 ):
+def LookingForLocation(pic, need_help, special_flag=False):
     
+    excption = 0 
     looking = True
     while looking:
         obj = pyautogui.locateOnScreen(pic, confidence=0.8)
