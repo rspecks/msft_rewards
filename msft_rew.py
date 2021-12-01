@@ -213,7 +213,7 @@ def main():
                 mobile_keep_going = False
                 pyautogui.alert(text='Got the loot for the day, goodnight', title='All Done!')
             else:
-                pyautogui.hotkey('ctrl','f4')
+                pyautogui.hotkey('alt','f4')
                 mobile_count = 15
 
 #################
