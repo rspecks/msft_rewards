@@ -14,8 +14,6 @@ import time
 import pyperclip
 import logging
 import os
-#cheappp
-import sys
 import json
 
 EMPTY = ""
@@ -168,6 +166,7 @@ def main():
     # working on it^^^
     #TODO add different variations (3) of how rewards link might look (or test to find out how rewards are counted up ;)
     # added a "NOT_CONFIDENT" global var, might fix this^^^
+    # Update^^^, it might be working, will know for sure tomorrow 
     # clicking mobile search link
     desired_data = "vm_mobile_search_link"
     list_of_data = JsonReader(desired_data, pic_data)
@@ -265,7 +264,7 @@ def ExceptionHandler(obj, need_help, excption):
     if flag:
         return obj_location
     elif excption == 4:
-        logging.debug(need_help + " taking too long")
+        logging.error(need_help + " taking too long")
         return EMPTY
     else:
         return EMPTY
