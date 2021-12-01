@@ -1,4 +1,5 @@
 # Main TODOs
+# - Make it work consistently lmao 
 # - Add different checks to ensure on right page
 # - Organize files with OOP structure 
 # - Add documentation (why so late? idk cuz fk documentation)
@@ -18,6 +19,7 @@ import json
 EMPTY = ""
 PC_REWARD_CAP = "150"
 MOB_REWARD_CAP = "100"
+NOT_CONFIDENT = .5
 #TODO Enum probs
 EDGE = 1
 ANDR_STUD = 2 
@@ -30,17 +32,16 @@ pyautogui.PAUSE = 0.75
 pyautogui.FAILSAFE = True
 
 log_file = "biglog.log"
-if not os.path.isfile(log_file):
-    #Create and configure logger
-    logging.basicConfig(filename=log_file,
-                        format='%(asctime)s %(message)s',
-                        filemode='a')
+#Create and configure logger
+logging.basicConfig(filename=log_file,
+                    format='%(asctime)s %(message)s',
+                    filemode='a')
 
-#Creating an object
-logger=logging.getLogger()
+# #Creating an object
+# logger=logging.getLogger()
 
-#Setting the threshold of logger to ERROR
-logger.setLevel(logging.DEBUG)
+# #Setting the threshold of logger to ERROR
+# logger.setLevel(logging.DEBUG)
 
 # my main man
 def main():
@@ -50,6 +51,7 @@ def main():
         pic_data = json.load(file)
 
     # get a bunch of words
+    #TODO this list has some strange words, searches can vary, might clean that up lawl 
     word_dir = "files/word_list.txt"
     with open(word_dir, 'r') as fh:
         word_list = fh.readlines()
@@ -58,6 +60,7 @@ def main():
     for word in word_list:
         inner_count = 0 
         for letter in str(word):    
+            #TODO which one is doing the thing lmao
             if letter != "\'" and letter != "\\" and (len(word)-1) != inner_count:
                 this_word = this_word + str(letter)
             inner_count+=1
@@ -71,23 +74,15 @@ def main():
 
     AppLauncher(EDGE)
 
-    # # waiting on browser (can adjust)
-    # time.sleep(2)
-
     # going to bing.com
     pyautogui.hotkey('ctrl','t')
     pyautogui.typewrite('bing.com')
     pyautogui.typewrite(['enter'])
 
-    # more waiting
-    time.sleep(1)
-
-    # vars
     pc_keep_going = True
     pc_count = 0 
-
     while pc_keep_going:
-
+        
         LetsGetRandom(word_list)
 
         pyautogui.typewrite(['f6'])
@@ -96,9 +91,9 @@ def main():
         pyautogui.typewrite(['enter'])
 
         pc_count+=1
-
-        if pc_count >= 15:
+        if pc_count >= 30:
             
+            #TODO better way to do this would be w/ "requests" lib and for security maybe "secrets", idek
             desired_data = "msft_rewards"
             list_of_data = JsonReader(desired_data, pic_data)
             msft_rewards_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
@@ -115,7 +110,7 @@ def main():
                 pc_keep_going = False
                # pyautogui.alert(text='Got the loot, onto the next task', title='All Done!')
             else:
-                pc_count = 10
+                pc_count = 25
 
     ###############################################
     # Functionality for mobile points starts here #
@@ -157,10 +152,14 @@ def main():
             pyautogui.click(vm_chrome_app_location)
             special_loop = False
 
+    #TODO just open a new tab and go to fking msft's site directly, dont give up, keep testing :,) 
+    # working on it^^^
+    #TODO add different variations (3) of how rewards link might look (or test to find out how rewards are counted up ;)
+    # added a "NOT_CONFIDENT" global var, might fix this^^^
     # clicking mobile search link
     desired_data = "vm_mobile_search_link"
     list_of_data = JsonReader(desired_data, pic_data)
-    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, NOT_CONFIDENT)
     pyautogui.click(vm_mobile_search_link_location)
 
     mobile_keep_going = True
@@ -168,25 +167,30 @@ def main():
     while mobile_keep_going:
 
         # clicking search
-        pyautogui.moveTo(100,100)
-        desired_data = "vm_rewards_search"
-        list_of_data = JsonReader(desired_data, pic_data)
-        vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
-        pyautogui.click(vm_rewards_search_location)
-        pyautogui.moveTo(100,100)
-        
-        # click the x button that appears when you click on search; clears search
-        desired_data = "vm_search_x_bttn"
-        list_of_data = JsonReader(desired_data, pic_data)
-        vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
-        pyautogui.click(vm_search_x_bttn_location)
+        special_loop = True
+        while special_loop: 
+            pyautogui.moveTo(100,100)
+            desired_data = "vm_rewards_search"
+            list_of_data = JsonReader(desired_data, pic_data)
+            vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+            pyautogui.click(vm_rewards_search_location)
+            pyautogui.moveTo(100,100)
+            
+            # click the x button that appears when you click on search; clears search
+            desired_data = "vm_search_x_bttn"
+            list_of_data = JsonReader(desired_data, pic_data)
+            vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], special_loop)
+            if vm_search_x_bttn_location != EMPTY:
+                pyautogui.click(vm_search_x_bttn_location)
+                special_loop = False
 
         LetsGetRandom(word_list)
 
         mobile_count +=1 
-
-        if mobile_count >= 10:
+        if mobile_count >= 20:
             
+            #TODO gotta close this back up or our buddy wont know wtf (or just click back into andr vm)
+            # I did a ctrl f4 lol, might be risquee
             AppLauncher(EDGE)
             special_loop = True
             while special_loop:
@@ -205,19 +209,19 @@ def main():
                     special_loop = False
 
             rewards_value = pyperclip.paste()
-
             if rewards_value == MOB_REWARD_CAP:
                 mobile_keep_going = False
                 pyautogui.alert(text='Got the loot for the day, goodnight', title='All Done!')
             else:
-                mobile_count = 5
+                pyautogui.hotkey('ctrl','f4')
+                mobile_count = 15
 
 #################
 #### Modules ####
 #################
 
 def AppLauncher(app):
-
+    
     if app == EDGE:
         os.startfile('"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"')
     elif app == ANDR_STUD:
@@ -230,13 +234,13 @@ def ExceptionHandler(obj, need_help, excption):
         obj_location = pyautogui.center(obj)
         flag = True
     except Exception:
-        logger.error("Error finding " + need_help)
+        logging.error("Error finding " + need_help)
     if excption >= 1:
         time.sleep(2.5)
     if flag:
         return obj_location
     elif excption == 4:
-        logger.debug(need_help + " taking too long")
+        logging.debug(need_help + " taking too long")
         return EMPTY
     else:
         return EMPTY
@@ -254,12 +258,12 @@ def LetsGetRandom(word_list):
     pyautogui.typewrite(str(word_list[random.randint(0,10000)]))
     pyautogui.typewrite(['enter'])
 
-def LookingForLocation(pic, need_help, special_flag=False):
+def LookingForLocation(pic, need_help, special_flag=False, confidence_num=0.8):
     
     excption = 0 
     looking = True
     while looking:
-        obj = pyautogui.locateOnScreen(pic, confidence=0.8)
+        obj = pyautogui.locateOnScreen(pic, confidence=confidence_num)
         obj_location = ExceptionHandler(obj, need_help, excption)
         excption+=1
         if obj_location != EMPTY:
