@@ -14,6 +14,8 @@ import time
 import pyperclip
 import logging
 import os
+#cheappp
+import sys
 import json
 
 EMPTY = ""
@@ -26,6 +28,8 @@ ANDR_STUD = 2
 # ya defo enums
 FILE_LOC = 0
 NEED_HELP = 1
+# Debugging purposes only
+DEBUG_MODE = False
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 0.75
@@ -74,23 +78,28 @@ def main():
 
     AppLauncher(EDGE)
 
-    # going to bing.com
-    pyautogui.hotkey('ctrl','t')
-    pyautogui.typewrite('bing.com')
-    pyautogui.typewrite(['enter'])
-
-    pc_keep_going = True
-    pc_count = 0 
-    while pc_keep_going:
-        
-        LetsGetRandom(word_list)
-
-        pyautogui.typewrite(['f6'])
-        pyautogui.typewrite(['f6'])
+    if not DEBUG_MODE:
+        # going to bing.com
+        pyautogui.hotkey('ctrl','t')
         pyautogui.typewrite('bing.com')
         pyautogui.typewrite(['enter'])
+        pc_count = 0 
+    else:
+        pc_count = 30
+    
+    pc_keep_going = True
+    while pc_keep_going:
+
+        if not DEBUG_MODE:         
+            LetsGetRandom(word_list)
+
+            pyautogui.typewrite(['f6'])
+            pyautogui.typewrite(['f6'])
+            pyautogui.typewrite('bing.com')
+            pyautogui.typewrite(['enter'])
 
         pc_count+=1
+
         if pc_count >= 30:
             
             #TODO better way to do this would be w/ "requests" lib and for security maybe "secrets", idek
@@ -105,12 +114,15 @@ def main():
             pyautogui.doubleClick(earnings_location)
             pyautogui.hotkey('ctrl','c')
             
-            rewards_value = pyperclip.paste()
-            if rewards_value == PC_REWARD_CAP:
-                pc_keep_going = False
-               # pyautogui.alert(text='Got the loot, onto the next task', title='All Done!')
+            if not DEBUG_MODE:
+                rewards_value = pyperclip.paste()
+                if rewards_value == PC_REWARD_CAP:
+                    pc_keep_going = False
+                # pyautogui.alert(text='Got the loot, onto the next task', title='All Done!')
+                else:
+                    pc_count = 25
             else:
-                pc_count = 25
+                pc_keep_going = False
 
     ###############################################
     # Functionality for mobile points starts here #
@@ -166,6 +178,9 @@ def main():
     mobile_count = 0 
     while mobile_keep_going:
 
+        #TODO sometimes a system ui pops up after clicking the mobile search link
+        # ^doesnt happen everytime so wouldnt have the program freak out if it cant find it 
+        # pic saved under pics/vm_systemui_msg
         # clicking search
         special_loop = True
         while special_loop: 
@@ -187,6 +202,8 @@ def main():
         LetsGetRandom(word_list)
 
         mobile_count +=1 
+        if DEBUG_MODE:
+            mobile_count = 20
         if mobile_count >= 20:
             
             #TODO gotta close this back up or our buddy wont know wtf (or just click back into andr vm)
@@ -223,9 +240,17 @@ def main():
 def AppLauncher(app):
     
     if app == EDGE:
-        os.startfile('"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"')
+        try:
+            os.startfile('"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"') 
+        except Exception:
+            logging.error("This dood ran this as a standard user, oof")
+
     elif app == ANDR_STUD:
-        os.startfile('"C:/Program Files/Android/Android Studio/bin/studio64.exe"')
+        try:
+            os.startfile('"C:/Program Files/Android/Android Studio/bin/studio64.exe"')
+        except Exception:
+            print()
+   
 
 def ExceptionHandler(obj, need_help, excption):
 
