@@ -6,7 +6,6 @@ PREREQUISITES
 2. Install the following libraries
   - Pyperclip
   - Pyautogui
-  - Requests (for now)
   - opencv-python
 3. Be signed into Msft account on Edge
 4. Have Msft Rewards Extension (make sure it's visible upon browser open) 
