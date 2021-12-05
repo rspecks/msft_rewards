@@ -146,6 +146,9 @@ def main():
     as_vm_pwr_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
     pyautogui.click(as_vm_pwr_bttn_location)
 
+    #TODO does this stop the "UI stop responsing" msg popup?
+    time.sleep(1.5)
+
     # mama im coming hooOOOooomme (clicking home button on vm)
     special_loop = True
     while special_loop:
@@ -163,11 +166,7 @@ def main():
             special_loop = False
 
     #TODO just open a new tab and go to fking msft's site directly, dont give up, keep testing :,) 
-    # working on it^^^
-    #TODO add different variations (3) of how rewards link might look (or test to find out how rewards are counted up ;)
-    # added a "NOT_CONFIDENT" global var, might fix this^^^
-    # Update^^^, it might be working, will know for sure tomorrow 
-    # clicking mobile search link
+    #UPDATE^: the file "potential_additon.py" has code that does that, just gotta implement 
     desired_data = "vm_mobile_search_link"
     list_of_data = JsonReader(desired_data, pic_data)
     vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, NOT_CONFIDENT)
