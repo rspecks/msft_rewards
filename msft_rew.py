@@ -1,8 +1,7 @@
 # Main TODOs
 # - Make it work consistently lmao 
-# - Add different checks to ensure on right page
+# - Add documentation 
 # - Organize files with OOP structure 
-# - Add documentation (why so late? idk cuz fk documentation)
 # - Move to laptop (or any available compatible device)
 # -- Setup web server (or API?? Would be a first for me) on laptop
 # -- Allow for remote points making \(￣︶￣*\))
@@ -26,8 +25,20 @@ ANDR_STUD = 2
 # ya defo enums
 FILE_LOC = 0
 NEED_HELP = 1
+# "msft_rewards"
+# "pc_earnings"
+# "avd_mgr"
+# "vm_play"
+# "vm_pwr_bttn"
+# "vm_home_bttn"
+# "vm_chrome_app"
+# "vm_mobile_search_link"
+# "vm_rewards_search"
+# "vm_search_x_bttn"
+# "mobile_earnings"
+
 # Debugging purposes only
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 0.75
@@ -51,6 +62,15 @@ def main():
     # JSOOOOOOOOOOOOOOOOOOOOON
     with open("files/pic_data.json") as file:
         pic_data = json.load(file)
+
+    # idk I made a dict of all the shit I needed, we'll see if it's needed lmao
+    desired_data = {}
+    data_count = 0
+    for data in pic_data:
+        desired_data.update({str(data_count):data["Obj_Name"]})
+        data_count+=1
+    # used to keep track of which pic to use in process from desired_data 
+    pic_order = 0
 
     # get a bunch of words
     #TODO this list has some strange words, searches can vary, might clean that up lawl 
@@ -101,16 +121,14 @@ def main():
         if pc_count >= 30:
             
             #TODO better way to do this would be w/ "requests" lib and for security maybe "secrets", idek
-            desired_data = "msft_rewards"
-            list_of_data = JsonReader(desired_data, pic_data)
-            msft_rewards_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+            msft_rewards_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
             pyautogui.click(msft_rewards_location)
+            pic_order+=1 
             
-            desired_data = "pc_earnings"
-            list_of_data = JsonReader(desired_data, pic_data)
-            earnings_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+            earnings_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
             pyautogui.doubleClick(earnings_location)
             pyautogui.hotkey('ctrl','c')
+            pic_order+=1 
             
             if not DEBUG_MODE:
                 rewards_value = pyperclip.paste()
@@ -129,22 +147,19 @@ def main():
     AppLauncher(ANDR_STUD)
 
     # clicking avd manager
-    desired_data = "avd_mgr"
-    list_of_data = JsonReader(desired_data, pic_data)
-    avd_mgr_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+    avd_mgr_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
     pyautogui.click(avd_mgr_location)
+    pic_order+=1 
     
     # clicking play on vm
-    desired_data = "vm_play"
-    list_of_data = JsonReader(desired_data, pic_data)
-    as_vm_play_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+    as_vm_play_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
     pyautogui.click(as_vm_play_location)
+    pic_order+=1 
 
     # clicking vm power button 
-    desired_data = "vm_pwr_bttn"
-    list_of_data = JsonReader(desired_data, pic_data)
-    as_vm_pwr_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+    as_vm_pwr_bttn_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
     pyautogui.click(as_vm_pwr_bttn_location)
+    pic_order+=1 
 
     #TODO does this stop the "UI stop responsing" msg popup?
     time.sleep(1.5)
@@ -152,25 +167,41 @@ def main():
     # mama im coming hooOOOooomme (clicking home button on vm)
     special_loop = True
     while special_loop:
-        desired_data = "vm_home_bttn"
-        list_of_data = JsonReader(desired_data, pic_data)
-        as_vm_home_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+        as_vm_home_bttn_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
         pyautogui.click(as_vm_home_bttn_location)
+        pic_order+=1 
 
         # flagging the problem child, plays loop back
-        desired_data = "vm_chrome_app"
-        list_of_data = JsonReader(desired_data, pic_data)
-        vm_chrome_app_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], special_loop)
+        vm_chrome_app_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
         if vm_chrome_app_location != EMPTY:
             pyautogui.click(vm_chrome_app_location)
+            pic_order+=1 
             special_loop = False
+        else:
+            pic_order-=1 
 
     #TODO just open a new tab and go to fking msft's site directly, dont give up, keep testing :,) 
     #UPDATE^: the file "potential_additon.py" has code that does that, just gotta implement 
-    desired_data = "vm_mobile_search_link"
-    list_of_data = JsonReader(desired_data, pic_data)
-    vm_mobile_search_link_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], False, NOT_CONFIDENT)
-    pyautogui.click(vm_mobile_search_link_location)
+    lets_not_be_too_hasty = True
+    while lets_not_be_too_hasty:
+
+        vm_mobile_search_link_location = LookingForLocation(desired_data[str(pic_order)], pic_data, lets_not_be_too_hasty, NOT_CONFIDENT)
+        if vm_mobile_search_link_location != EMPTY:
+            pyautogui.click(vm_mobile_search_link_location)
+            pic_order+=1
+        else:
+            pic_order+=2 
+
+        did_it_load = LookingForLocation(desired_data[str(pic_order)], pic_data, lets_not_be_too_hasty)
+
+        if did_it_load != EMPTY and desired_data[str(pic_order)] != "vm_systemui_msg":
+            lets_not_be_too_hasty = False           
+        elif did_it_load != EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
+            pyautogui.click(did_it_load)
+        elif did_it_load == EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
+            pic_order-=1
+        else:
+            pic_order-=2 
 
     mobile_keep_going = True
     mobile_count = 0 
@@ -183,19 +214,19 @@ def main():
         special_loop = True
         while special_loop: 
             pyautogui.moveTo(100,100)
-            desired_data = "vm_rewards_search"
-            list_of_data = JsonReader(desired_data, pic_data)
-            vm_rewards_search_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+            vm_rewards_search_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
             pyautogui.click(vm_rewards_search_location)
+            pic_order+=1 
             pyautogui.moveTo(100,100)
             
             # click the x button that appears when you click on search; clears search
-            desired_data = "vm_search_x_bttn"
-            list_of_data = JsonReader(desired_data, pic_data)
-            vm_search_x_bttn_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], special_loop)
+            vm_search_x_bttn_location = LookingForLocation(desired_data[str(pic_order)], pic_data, special_loop)
             if vm_search_x_bttn_location != EMPTY:
                 pyautogui.click(vm_search_x_bttn_location)
+                pic_order+=1 
                 special_loop = False
+            else:
+                pic_order-=1 
 
         LetsGetRandom(word_list)
 
@@ -209,15 +240,11 @@ def main():
             AppLauncher(EDGE)
             special_loop = True
             while special_loop:
-                desired_data = "msft_rewards"
-                list_of_data = JsonReader(desired_data, pic_data)
-                msft_rewards_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP])
+                msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
                 pyautogui.click(msft_rewards_location)
 
                 # potential problem child
-                desired_data = "mobile_earnings"
-                list_of_data = JsonReader(desired_data, pic_data)
-                mobile_earnings_location = LookingForLocation(list_of_data[FILE_LOC], list_of_data[NEED_HELP], special_loop)
+                mobile_earnings_location = LookingForLocation(desired_data[str(pic_order)], pic_data, special_loop)
                 if mobile_earnings_location != EMPTY:
                     pyautogui.doubleClick(mobile_earnings_location)
                     pyautogui.hotkey('ctrl','c')
@@ -229,6 +256,7 @@ def main():
                 pyautogui.alert(text='Got the loot for the day, goodnight', title='All Done!')
             else:
                 pyautogui.hotkey('alt','f4')
+                pic_order = 8
                 mobile_count = 15
 
 #################
@@ -281,18 +309,20 @@ def LetsGetRandom(word_list):
     pyautogui.typewrite(str(word_list[random.randint(0,10000)]))
     pyautogui.typewrite(['enter'])
 
-def LookingForLocation(pic, need_help, special_flag=False, confidence_num=0.8):
+def LookingForLocation(desired_data, pic_data, special_flag=False, confidence_num=0.8):
     
+    list_of_data = JsonReader(desired_data, pic_data)
+
     excption = 0 
     looking = True
     while looking:
-        obj = pyautogui.locateOnScreen(pic, confidence=confidence_num)
-        obj_location = ExceptionHandler(obj, need_help, excption)
+        obj = pyautogui.locateOnScreen(list_of_data[FILE_LOC], confidence=confidence_num)
+        obj_location = ExceptionHandler(obj, list_of_data[NEED_HELP], excption)
         excption+=1
         if obj_location != EMPTY:
             return obj_location
         elif special_flag:
-            return EMPTY
+            return EMPTY 
 
 # main bish
 main()
