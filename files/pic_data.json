@@ -1,14 +1,14 @@
 [
-    {"Obj_Name": "msft_rewards", "Description": "msft rewards button", "File_Loc":"pics/rewards_icon.png"},
-    {"Obj_Name": "pc_earnings", "Description": "the area in rewards extension", "File_Loc":"pics/pc_earnings_icon.png"},
-    {"Obj_Name": "avd_mgr", "Description": "avd manager", "File_Loc":"pics/as_avd_manager.png"},
-    {"Obj_Name": "vm_play", "Description": "the play button in avd manager", "File_Loc":"pics/as_vm_play.png"},
-    {"Obj_Name": "vm_pwr_bttn", "Description": "power button on phone vm", "File_Loc":"pics/as_vm_pwr_bttn.png"},
-    {"Obj_Name": "vm_home_bttn", "Description": "home button a few buttons below power button", "File_Loc":"pics/as_vm_home_bttn.png"},
-    {"Obj_Name": "vm_chrome_app", "Description": "the chrome app on vm", "File_Loc":"pics/vm_chrome_app.png"},
-    {"Obj_Name": "vm_mobile_search_link", "Description": "the mobile rewards link on points breakdown", "File_Loc":"pics/vm_mobile_search_link.png"},
-    {"Obj_Name": "vm_systemui_msg", "Description": "a system ui message that can occur when going a little too quick", "File_Loc":"pics/vm_systemui_msg.png"},
-    {"Obj_Name": "vm_rewards_search", "Description": "the search area after you click on rewards link", "File_Loc":"pics/vm_rewards_search.png"},
-    {"Obj_Name": "vm_search_x_bttn", "Description": "the 'x' that appears after clicking on search box", "File_Loc":"pics/vm_search_x_bttn.png"},
-    {"Obj_Name": "mobile_earnings", "Description": "the rewards ext area", "File_Loc":"pics/mobile_earnings_icon.png"}
+    {"Order_Used": "0", "Obj_Name": "msft_rewards", "Description": "msft rewards button", "File_Loc":"pics/rewards_icon.png"},
+    {"Order_Used": "1","Obj_Name": "pc_earnings", "Description": "the area in rewards extension", "File_Loc":"pics/pc_earnings_icon.png"},
+    {"Order_Used": "2","Obj_Name": "avd_mgr", "Description": "avd manager", "File_Loc":"pics/as_avd_manager.png"},
+    {"Order_Used": "3","Obj_Name": "vm_play", "Description": "the play button in avd manager", "File_Loc":"pics/as_vm_play.png"},
+    {"Order_Used": "4","Obj_Name": "vm_pwr_bttn", "Description": "power button on phone vm", "File_Loc":"pics/as_vm_pwr_bttn.png"},
+    {"Order_Used": "5","Obj_Name": "vm_home_bttn", "Description": "home button a few buttons below power button", "File_Loc":"pics/as_vm_home_bttn.png"},
+    {"Order_Used": "6","Obj_Name": "vm_chrome_app", "Description": "the chrome app on vm", "File_Loc":"pics/vm_chrome_app.png"},
+    {"Order_Used": "7","Obj_Name": "vm_mobile_search_link", "Description": "the mobile rewards link on points breakdown", "File_Loc":"pics/vm_mobile_search_link.png"},
+    {"Order_Used": "8","Obj_Name": "vm_systemui_msg", "Description": "a system ui message that can occur when going a little too quick", "File_Loc":"pics/vm_systemui_msg.png"},
+    {"Order_Used": "9","Obj_Name": "vm_rewards_search", "Description": "the search area after you click on rewards link", "File_Loc":"pics/vm_rewards_search.png"},
+    {"Order_Used": "10","Obj_Name": "vm_search_x_bttn", "Description": "the 'x' that appears after clicking on search box", "File_Loc":"pics/vm_search_x_bttn.png"},
+    {"Order_Used": "11","Obj_Name": "mobile_earnings", "Description": "the rewards ext area", "File_Loc":"pics/mobile_earnings_icon.png"}
 ]

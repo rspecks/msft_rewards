@@ -14,6 +14,7 @@ import pyperclip
 import logging
 import os
 import json
+import psutil
 
 EMPTY = ""
 PC_REWARD_CAP = "150"
@@ -38,7 +39,7 @@ NEED_HELP = 1
 # "mobile_earnings"
 
 # Debugging purposes only
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 0.75
@@ -65,10 +66,8 @@ def main():
 
     # idk I made a dict of all the shit I needed, we'll see if it's needed lmao
     desired_data = {}
-    data_count = 0
     for data in pic_data:
-        desired_data.update({str(data_count):data["Obj_Name"]})
-        data_count+=1
+        desired_data.update({data["Order_Used"]:data["Obj_Name"]})
     # used to keep track of which pic to use in process from desired_data 
     pic_order = 0
 
@@ -101,7 +100,7 @@ def main():
         pyautogui.hotkey('ctrl','t')
         pyautogui.typewrite('bing.com')
         pyautogui.typewrite(['enter'])
-        pc_count = 0 
+        pc_count = 1 
     else:
         pc_count = 30
     
@@ -120,20 +119,22 @@ def main():
 
         if pc_count >= 30:
             
-            #TODO better way to do this would be w/ "requests" lib and for security maybe "secrets", idek
-            msft_rewards_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
-            pyautogui.click(msft_rewards_location)
-            pic_order+=1 
             
-            earnings_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
+            #TODO better way to do this would be w/ "requests" lib and for security maybe "secrets", idek
+            msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+            pyautogui.click(msft_rewards_location)
+ 
+            
+            earnings_location = LookingForLocation(desired_data["1"], pic_data)
             pyautogui.doubleClick(earnings_location)
             pyautogui.hotkey('ctrl','c')
-            pic_order+=1 
+
             
             if not DEBUG_MODE:
                 rewards_value = pyperclip.paste()
                 if rewards_value == PC_REWARD_CAP:
                     pc_keep_going = False
+                    pyautogui.hotkey('alt','f4')
                 # pyautogui.alert(text='Got the loot, onto the next task', title='All Done!')
                 else:
                     pc_count = 25
@@ -147,17 +148,17 @@ def main():
     AppLauncher(ANDR_STUD)
 
     # clicking avd manager
-    avd_mgr_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
+    avd_mgr_location = LookingForLocation(desired_data["2"], pic_data)
     pyautogui.click(avd_mgr_location)
     pic_order+=1 
     
     # clicking play on vm
-    as_vm_play_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
+    as_vm_play_location = LookingForLocation(desired_data["3"], pic_data)
     pyautogui.click(as_vm_play_location)
     pic_order+=1 
 
     # clicking vm power button 
-    as_vm_pwr_bttn_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
+    as_vm_pwr_bttn_location = LookingForLocation(desired_data["4"], pic_data)
     pyautogui.click(as_vm_pwr_bttn_location)
     pic_order+=1 
 
@@ -167,12 +168,12 @@ def main():
     # mama im coming hooOOOooomme (clicking home button on vm)
     special_loop = True
     while special_loop:
-        as_vm_home_bttn_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
+        as_vm_home_bttn_location = LookingForLocation(desired_data["5"], pic_data)
         pyautogui.click(as_vm_home_bttn_location)
         pic_order+=1 
 
         # flagging the problem child, plays loop back
-        vm_chrome_app_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
+        vm_chrome_app_location = LookingForLocation(desired_data["6"], pic_data)
         if vm_chrome_app_location != EMPTY:
             pyautogui.click(vm_chrome_app_location)
             pic_order+=1 
@@ -184,24 +185,25 @@ def main():
     #UPDATE^: the file "potential_additon.py" has code that does that, just gotta implement 
     lets_not_be_too_hasty = True
     while lets_not_be_too_hasty:
-
-        vm_mobile_search_link_location = LookingForLocation(desired_data[str(pic_order)], pic_data, lets_not_be_too_hasty, NOT_CONFIDENT)
+        
+        vm_mobile_search_link_location = LookingForLocation(desired_data["7"], pic_data, lets_not_be_too_hasty, NOT_CONFIDENT)
         if vm_mobile_search_link_location != EMPTY:
             pyautogui.click(vm_mobile_search_link_location)
-            pic_order+=1
-        else:
-            pic_order+=2 
+        did_ui_msg_load = LookingForLocation(desired_data["8"], pic_data, lets_not_be_too_hasty)
+        if did_ui_msg_load != EMPTY:
+            pyautogui.click(did_ui_msg_load)
+        did_search_load = LookingForLocation(desired_data["9"], pic_data, lets_not_be_too_hasty, NOT_CONFIDENT)
+        if did_search_load != EMPTY:
+            lets_not_be_too_hasty = False
 
-        did_it_load = LookingForLocation(desired_data[str(pic_order)], pic_data, lets_not_be_too_hasty)
-
-        if did_it_load != EMPTY and desired_data[str(pic_order)] != "vm_systemui_msg":
-            lets_not_be_too_hasty = False           
-        elif did_it_load != EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
-            pyautogui.click(did_it_load)
-        elif did_it_load == EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
-            pic_order-=1
-        else:
-            pic_order-=2 
+        # if did_it_load != EMPTY and desired_data[str(pic_order)] != "vm_systemui_msg":
+        #     lets_not_be_too_hasty = False           
+        # elif did_it_load != EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
+        #     pyautogui.click(did_it_load)
+        # elif did_it_load == EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
+        #     pic_order-=1
+        # else:
+        #     pic_order-=2 
 
     mobile_keep_going = True
     mobile_count = 0 
@@ -213,21 +215,21 @@ def main():
         # clicking search
         special_loop = True
         while special_loop: 
+            time.sleep(.5)
             pyautogui.moveTo(100,100)
-            vm_rewards_search_location = LookingForLocation(desired_data[str(pic_order)], pic_data)
-            pyautogui.click(vm_rewards_search_location)
-            pic_order+=1 
+            vm_rewards_search_location = LookingForLocation(desired_data["9"], pic_data, special_loop)
+            if vm_rewards_search_location != EMPTY:
+                pyautogui.click(vm_rewards_search_location)
             pyautogui.moveTo(100,100)
             
             # click the x button that appears when you click on search; clears search
-            vm_search_x_bttn_location = LookingForLocation(desired_data[str(pic_order)], pic_data, special_loop)
+            vm_search_x_bttn_location = LookingForLocation(desired_data["10"], pic_data, special_loop)
             if vm_search_x_bttn_location != EMPTY:
                 pyautogui.click(vm_search_x_bttn_location)
-                pic_order+=1 
                 special_loop = False
-            else:
-                pic_order-=1 
 
+        #TODO does this stop VM from crashing lmao this is new 
+        time.sleep(.5)
         LetsGetRandom(word_list)
 
         mobile_count +=1 
@@ -235,16 +237,13 @@ def main():
             mobile_count = 20
         if mobile_count >= 20:
             
-            #TODO gotta close this back up or our buddy wont know wtf (or just click back into andr vm)
-            # I did a ctrl f4 lol, might be risquee
             AppLauncher(EDGE)
             special_loop = True
             while special_loop:
                 msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
                 pyautogui.click(msft_rewards_location)
 
-                # potential problem child
-                mobile_earnings_location = LookingForLocation(desired_data[str(pic_order)], pic_data, special_loop)
+                mobile_earnings_location = LookingForLocation(desired_data["11"], pic_data, special_loop)
                 if mobile_earnings_location != EMPTY:
                     pyautogui.doubleClick(mobile_earnings_location)
                     pyautogui.hotkey('ctrl','c')
@@ -253,29 +252,38 @@ def main():
             rewards_value = pyperclip.paste()
             if rewards_value == MOB_REWARD_CAP:
                 mobile_keep_going = False
-                pyautogui.alert(text='Got the loot for the day, goodnight', title='All Done!')
+                #pyautogui.alert(text='Got the loot for the day, goodnight', title='All Done!')
             else:
                 pyautogui.hotkey('alt','f4')
-                pic_order = 8
+
                 mobile_count = 15
+    # Start of daily points clicker
+    # click one of the 5-10 point ones (will need to research the quiz ones)
+    # click rewards icon
+    # click points again
+    # repeat until all daily are done
+    # move onto the other drop down (under ext, will visit site )
 
 #################
 #### Modules ####
 #################
 
 def AppLauncher(app):
-    
-    if app == EDGE:
-        try:
-            os.startfile('"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"') 
-        except Exception:
-            logging.error("This dood ran this as a standard user, oof")
+    app_running = False
+    while not app_running:
+        if app == EDGE:
+            try:
+                os.startfile('"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"') 
+                app_running = ProcessCheck("msedge")         
+            except Exception:
+                logging.error("This dood ran this as a standard user, oof")
 
-    elif app == ANDR_STUD:
-        try:
-            os.startfile('"C:/Program Files/Android/Android Studio/bin/studio64.exe"')
-        except Exception:
-            print()
+        elif app == ANDR_STUD:
+            try:
+                os.startfile('"C:/Program Files/Android/Android Studio/bin/studio64.exe"')
+                app_running = ProcessCheck("studio64")
+            except Exception:
+                logging.error("This dood ran this as a standard user, oof")
    
 
 def ExceptionHandler(obj, need_help, excption):
@@ -307,6 +315,7 @@ def JsonReader(desired_data, pic_data):
 def LetsGetRandom(word_list):
     """Probably going to be under a big ole Pyautogui class"""    
     pyautogui.typewrite(str(word_list[random.randint(0,10000)]))
+    time.sleep(.5)
     pyautogui.typewrite(['enter'])
 
 def LookingForLocation(desired_data, pic_data, special_flag=False, confidence_num=0.8):
@@ -324,6 +333,18 @@ def LookingForLocation(desired_data, pic_data, special_flag=False, confidence_nu
         elif special_flag:
             return EMPTY 
 
+def ProcessCheck(process):
+    """Check if there is any running process that contains the given name process."""
+
+    #Iterate over the all the running process
+    for proc in psutil.process_iter():
+        try:
+            # Check if process name contains the given name string.
+            if process.lower() in proc.name().lower():
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return False
 # main bish
 main()
 
