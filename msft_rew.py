@@ -8,6 +8,7 @@
 # - Attempt look at other ways to make points
 
 import random
+from typing import _SpecialForm
 import pyautogui
 import time
 import pyperclip
@@ -263,6 +264,32 @@ def main():
     # click points again
     # repeat until all daily are done
     # move onto the other drop down (under ext, will visit site )
+    for x in range(3):
+
+        msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+        pyautogui.click(msft_rewards_location)
+
+        pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True)
+        if pts10_extra_activity_location != EMPTY:
+            pyautogui.click(pts10_extra_activity_location)
+            pyautogui.hotkey('ctrl','f4')
+        
+    for x in range(3):
+
+        special_loop = True
+        while special_loop:
+            msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+            pyautogui.click(msft_rewards_location)
+
+            more_activities_location = LookingForLocation(desired_data["13"], pic_data, special_loop)
+            if more_activities_location != EMPTY:
+                pyautogui.click(more_activities_location)
+                special_loop = False
+
+        pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True, NOT_CONFIDENT)
+        if pts10_extra_activity_location != EMPTY:
+            pyautogui.click(pts10_extra_activity_location)
+            pyautogui.hotkey('ctrl','f4')    
 
 #################
 #### Modules ####
