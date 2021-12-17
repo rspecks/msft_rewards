@@ -16,6 +16,7 @@ import logging
 import os
 import json
 import psutil
+import signal
 
 EMPTY = ""
 PC_REWARD_CAP = "150"
@@ -34,7 +35,7 @@ FILE_LOC = 0
 NEED_HELP = 1
 
 # Debugging purposes only
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 0.75
@@ -90,8 +91,7 @@ def main():
 
     AppLauncher(EDGE)
     if not DEBUG_MODE:
-        msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
-        pyautogui.click(msft_rewards_location)
+        ClickMsftRewards(desired_data, pic_data)
 
     if not DEBUG_MODE:
         # going to bing.com
@@ -119,13 +119,16 @@ def main():
             
             
             #TODO better way to do this would be w/ "requests" lib and for security maybe "secrets", idek
-            msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
-            pyautogui.click(msft_rewards_location)
- 
-            
-            earnings_location = LookingForLocation(desired_data["1"], pic_data)
-            pyautogui.doubleClick(earnings_location)
-            pyautogui.hotkey('ctrl','c')
+            special_loop = True
+            while special_loop:
+
+                ClickMsftRewards(desired_data, pic_data)
+        
+                earnings_location = LookingForLocation(desired_data["1"], pic_data, special_loop, CONFIDENT, 1)
+                if earnings_location != EMPTY:
+                    pyautogui.doubleClick(earnings_location)
+                    pyautogui.hotkey('ctrl','c')
+                    special_loop = False
 
             
             if not DEBUG_MODE:
@@ -137,6 +140,7 @@ def main():
                 else:
                     pc_count = 25
             else:
+                pyautogui.hotkey('alt','f4')
                 pc_keep_going = False
 
     ###############################################
@@ -148,17 +152,17 @@ def main():
     # clicking avd manager
     avd_mgr_location = LookingForLocation(desired_data["2"], pic_data)
     pyautogui.click(avd_mgr_location)
-    pic_order+=1 
+      
     
     # clicking play on vm
     as_vm_play_location = LookingForLocation(desired_data["3"], pic_data)
     pyautogui.click(as_vm_play_location)
-    pic_order+=1 
+      
 
     # clicking vm power button 
     as_vm_pwr_bttn_location = LookingForLocation(desired_data["4"], pic_data)
     pyautogui.click(as_vm_pwr_bttn_location)
-    pic_order+=1 
+      
 
     #TODO does this stop the "UI stop responsing" msg popup?
     time.sleep(1.5)
@@ -168,13 +172,13 @@ def main():
     while special_loop:
         as_vm_home_bttn_location = LookingForLocation(desired_data["5"], pic_data)
         pyautogui.click(as_vm_home_bttn_location)
-        pic_order+=1 
+          
 
         # flagging the problem child, plays loop back
         vm_chrome_app_location = LookingForLocation(desired_data["6"], pic_data)
         if vm_chrome_app_location != EMPTY:
             pyautogui.click(vm_chrome_app_location)
-            pic_order+=1 
+              
             special_loop = False
         else:
             pic_order-=1 
@@ -231,8 +235,8 @@ def main():
             AppLauncher(EDGE)
             special_loop = True
             while special_loop:
-                msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
-                pyautogui.click(msft_rewards_location)
+
+                ClickMsftRewards(desired_data, pic_data)
 
                 mobile_earnings_location = LookingForLocation(desired_data["11"], pic_data, special_loop)
                 if mobile_earnings_location != EMPTY:
@@ -243,20 +247,62 @@ def main():
             rewards_value = pyperclip.paste()
             if rewards_value == MOB_REWARD_CAP:
                 mobile_keep_going = False
-                #pyautogui.alert(text='Got the loot for the day, goodnight', title='All Done!')
+                pyautogui.hotkey('alt','f4')
             else:
                 pyautogui.hotkey('alt','f4')
 
                 mobile_count = 15
+    
+    # cleanup crew
+    vm_chrome_tab_switcher_location = LookingForLocation(desired_data["17"], pic_data)
+    pyautogui.click(vm_chrome_tab_switcher_location)
+
+    vm_tab_x_bttn_location = LookingForLocation(desired_data["18"], pic_data)
+    pyautogui.click(vm_tab_x_bttn_location)
+
+    as_vm_back_bttn_location = LookingForLocation(desired_data["19"], pic_data)
+    pyautogui.click(as_vm_back_bttn_location)
+
+    vm_mobile_search_link_location = LookingForLocation(desired_data["7"], pic_data, True)
+    if vm_mobile_search_link_location == EMPTY:
+
+        vm_chrome_home_bttn_location = LookingForLocation(desired_data["20"], pic_data)
+        pyautogui.click(vm_chrome_home_bttn_location)
+
+        vm_chrome_home_search_location = LookingForLocation(desired_data["21"], pic_data)
+        pyautogui.click(vm_chrome_home_search_location)
+
+        pyautogui.typewrite("rewards.microsoft")
+        time.sleep(.25)
+        pyautogui.typewrite(".com/points")
+        pyautogui.typewrite("breakdown")
+        time.sleep(.5)
+        pyautogui.typewrite(['enter'])
+
+    as_vm_pwr_bttn_location = LookingForLocation(desired_data["4"], pic_data)
+    pyautogui.click(as_vm_pwr_bttn_location)
+
+    pyautogui.hotkey('alt','f4')
+
+    process_name = "studio64"
+    pid = None
+
+    for proc in psutil.process_iter():
+        if process_name in proc.name():
+            pid = proc.pid
+    sig= signal.SIGTERM
+    os.kill(pid, sig)
+
     # Start of daily points clicker
     # mini games research
     # ideally would like to have all their major games booked and studied so bot can squeeze out a few more pts
+    
+    AppLauncher(EDGE)
 
     time_delay = 1
     for x in range(3):
 
-        msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
-        pyautogui.click(msft_rewards_location)
+        ClickMsftRewards(desired_data, pic_data)
 
         pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True, SLIGHTLY_CONFIDENT, time_delay)
         if pts10_extra_activity_location != EMPTY:
@@ -274,8 +320,8 @@ def main():
 
         special_loop = True
         while special_loop:
-            msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
-            pyautogui.click(msft_rewards_location)
+
+            ClickMsftRewards(desired_data, pic_data)
 
             more_activities_location = LookingForLocation(desired_data["14"], pic_data, special_loop)
             if more_activities_location != EMPTY:
@@ -327,6 +373,11 @@ def AppLauncher(app):
                 app_running = ProcessCheck("studio64")
             except Exception:
                 logging.error("This dood ran this as a standard user, oof")
+
+def ClickMsftRewards(desired_data, pic_data):
+    # not sure, just do this a lot, refactoring will be something
+    msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+    pyautogui.click(msft_rewards_location)
    
 
 def ExceptionHandler(obj, need_help, excption):

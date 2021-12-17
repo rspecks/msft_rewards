@@ -72,12 +72,12 @@
         "Order_Used": "12",
         "Obj_Name": "10pts_extra_activity",
         "Description": "one of the activities worth 10pts", 
-        "File_Loc":"pics/10pts_extra_activity.png"},
+        "File_Loc":"pics/edge/general/10pts_extra_activity.png"},
     {
         "Order_Used": "13",
         "Obj_Name": "5pts_extra_activity",
         "Description": "one of the activities worth 5pts", 
-        "File_Loc":"pics/5pts_extra_activity.png"},
+        "File_Loc":"pics/edge/general/5pts_extra_activity.png"},
     {
         "Order_Used": "14",
         "Obj_Name": "more_activities", 
@@ -92,5 +92,36 @@
         "Order_Used": "16",
         "Obj_Name": "daily_poll_option", 
         "Description": "option after clicking on daily poll", 
-        "File_Loc":"pics/edge/dailypoll/daily_poll_option.png"}
+        "File_Loc":"pics/edge/dailypoll/daily_poll_option.png"
+    },
+    {
+        "Order_Used": "17",
+        "Obj_Name": "vm_chrome_tab_switcher", 
+        "Description": "the box that you can click to view all tabs", 
+        "File_Loc":"pics/mobilevm/vm_chrome_tab_switcher.png"
+    },
+    {
+        "Order_Used": "18",
+        "Obj_Name": "vm_tab_x_bttn", 
+        "Description": "the x button next to an open tab in tab switcher view", 
+        "File_Loc":"pics/mobilevm/vm_tab_x_bttn.png"
+    },
+    {
+        "Order_Used": "19",
+        "Obj_Name": "as_vm_back_bttn",
+        "Description": "back button on phone vm",
+        "File_Loc":"pics/andrstd/as_vm_back_bttn.png"
+    },
+    {
+        "Order_Used": "20",
+        "Obj_Name": "vm_chrome_home_bttn", 
+        "Description": "home button present in top left corner when viewing a tab", 
+        "File_Loc":"pics/mobilevm/vm_chrome_home_bttn.png"
+    },
+    {
+        "Order_Used": "21",
+        "Obj_Name": "vm_chrome_home_search", 
+        "Description": "search box after clicking on home icon", 
+        "File_Loc":"pics/mobilevm/vm_chrome_home_search.png"
+    }
 ]
