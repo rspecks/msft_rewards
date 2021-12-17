@@ -20,27 +20,21 @@ import psutil
 EMPTY = ""
 PC_REWARD_CAP = "150"
 MOB_REWARD_CAP = "100"
-NOT_CONFIDENT = .5
+# How confident are you bruv?
+VERY_CONFIDENT = 0.9
+CONFIDENT = 0.8
+SLIGHTLY_CONFIDENT = 0.7
+SLIGHTLY_NOT_CONFIDENT = 0.6
+NOT_CONFIDENT = 0.5
 #TODO Enum probs
 EDGE = 1
 ANDR_STUD = 2 
 # ya defo enums
 FILE_LOC = 0
 NEED_HELP = 1
-# "msft_rewards"
-# "pc_earnings"
-# "avd_mgr"
-# "vm_play"
-# "vm_pwr_bttn"
-# "vm_home_bttn"
-# "vm_chrome_app"
-# "vm_mobile_search_link"
-# "vm_rewards_search"
-# "vm_search_x_bttn"
-# "mobile_earnings"
 
 # Debugging purposes only
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # failsafes, drag mouse to top left corner of screen to quit app
 pyautogui.PAUSE = 0.75
@@ -95,6 +89,9 @@ def main():
     ################################################
 
     AppLauncher(EDGE)
+    if not DEBUG_MODE:
+        msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+        pyautogui.click(msft_rewards_location)
 
     if not DEBUG_MODE:
         # going to bing.com
@@ -197,14 +194,7 @@ def main():
         if did_search_load != EMPTY:
             lets_not_be_too_hasty = False
 
-        # if did_it_load != EMPTY and desired_data[str(pic_order)] != "vm_systemui_msg":
-        #     lets_not_be_too_hasty = False           
-        # elif did_it_load != EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
-        #     pyautogui.click(did_it_load)
-        # elif did_it_load == EMPTY and desired_data[str(pic_order)] == "vm_systemui_msg":
-        #     pic_order-=1
-        # else:
-        #     pic_order-=2 
+
 
     mobile_keep_going = True
     mobile_count = 0 
@@ -259,19 +249,25 @@ def main():
 
                 mobile_count = 15
     # Start of daily points clicker
-    # click one of the 5-10 point ones (will need to research the quiz ones)
-    # click rewards icon
-    # click points again
-    # repeat until all daily are done
-    # move onto the other drop down (under ext, will visit site )
+    # mini games research
+    # ideally would like to have all their major games booked and studied so bot can squeeze out a few more pts
+
+    time_delay = 1
     for x in range(3):
 
         msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
         pyautogui.click(msft_rewards_location)
 
-        pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True)
+        pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True, SLIGHTLY_CONFIDENT, time_delay)
         if pts10_extra_activity_location != EMPTY:
             pyautogui.click(pts10_extra_activity_location)
+            pyautogui.hotkey('ctrl','f4')
+            msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+            pyautogui.click(msft_rewards_location)
+        
+        pts5_extra_activity_location = LookingForLocation(desired_data["13"], pic_data, True, SLIGHTLY_CONFIDENT, time_delay)
+        if pts5_extra_activity_location != EMPTY:
+            pyautogui.click(pts5_extra_activity_location)
             pyautogui.hotkey('ctrl','f4')
         
     for x in range(3):
@@ -281,15 +277,35 @@ def main():
             msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
             pyautogui.click(msft_rewards_location)
 
-            more_activities_location = LookingForLocation(desired_data["13"], pic_data, special_loop)
+            more_activities_location = LookingForLocation(desired_data["14"], pic_data, special_loop)
             if more_activities_location != EMPTY:
                 pyautogui.click(more_activities_location)
                 special_loop = False
 
-        pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True, NOT_CONFIDENT)
+        
+        pts10_extra_activity_location = LookingForLocation(desired_data["12"], pic_data, True, SLIGHTLY_CONFIDENT, time_delay)
         if pts10_extra_activity_location != EMPTY:
             pyautogui.click(pts10_extra_activity_location)
-            pyautogui.hotkey('ctrl','f4')    
+            pyautogui.hotkey('ctrl','f4')  
+
+        pts5_extra_activity_location = LookingForLocation(desired_data["13"], pic_data, True, SLIGHTLY_CONFIDENT, time_delay)
+        if pts5_extra_activity_location != EMPTY:
+            pyautogui.click(pts5_extra_activity_location)
+            pyautogui.hotkey('ctrl','f4')  
+    
+    special_loop = True
+    while special_loop:
+    
+        msft_rewards_location = LookingForLocation(desired_data["0"], pic_data)
+        pyautogui.click(msft_rewards_location)
+
+        daily_poll_location = LookingForLocation(desired_data["15"], pic_data, True, SLIGHTLY_CONFIDENT, time_delay)
+        if daily_poll_location != EMPTY:
+            pyautogui.click(daily_poll_location)
+            daily_poll_option_location = LookingForLocation(desired_data["16"], pic_data, False, SLIGHTLY_CONFIDENT)
+            pyautogui.click(daily_poll_option_location)
+            special_loop = False
+
 
 #################
 #### Modules ####
@@ -345,13 +361,14 @@ def LetsGetRandom(word_list):
     time.sleep(.5)
     pyautogui.typewrite(['enter'])
 
-def LookingForLocation(desired_data, pic_data, special_flag=False, confidence_num=0.8):
+def LookingForLocation(desired_data, pic_data, special_flag=False, confidence_num=0.8, time_delay=0):
     
     list_of_data = JsonReader(desired_data, pic_data)
 
     excption = 0 
     looking = True
     while looking:
+        time.sleep(time_delay)
         obj = pyautogui.locateOnScreen(list_of_data[FILE_LOC], confidence=confidence_num)
         obj_location = ExceptionHandler(obj, list_of_data[NEED_HELP], excption)
         excption+=1
