@@ -8,6 +8,7 @@ PREREQUISITES
   - Pyautogui
   - opencv-python
   - psutil
+  - pillow
 3. Be signed into Msft account on Edge
 4. Have Msft Rewards Extension (make sure it's visible upon browser open) 
 5. Have Android Studio 4.2.1
